@@ -16,6 +16,13 @@
 
 using namespace std;
 
+void splash() {
+	cout << "======================" << endl;
+	cout << "Git Cherrypicking Tool" << endl;
+	cout << "======================" << endl;
+
+}
+
 /*
  *
  */
@@ -32,8 +39,7 @@ int main(int argc, char** argv) {
 		argumentsGot = true;
 	}
 
-	cout << "Git Merging Tool\t" << applyCommands << endl;
-
+	splash();
 
 	string path = "/home/tziegler/Bigpoint/seafight_Lokal";
 
@@ -50,7 +56,7 @@ int main(int argc, char** argv) {
 	string cherryListSchowCommand = "L";
 	string markForCherry = "m";
 
-	ScreenHandle::enableColor(true);
+	ScreenHandle::enableColor(false);
 
 	MenuHandle Menu;
 
@@ -76,6 +82,8 @@ int main(int argc, char** argv) {
 	Menu.addMenu("...Just Show Cherrypick", "c");
 	Menu.addMenu("...Cherrypick marked", "cm");
 	Menu.addMenu("Start Reading", "r");
+	Menu.addMenu("color on", "coloron");
+	Menu.addMenu("color off", "coloroff");
 
 
 	Menu.setPromot(GitWorker.getCurrentGitBranch());
@@ -101,6 +109,14 @@ int main(int argc, char** argv) {
 
 		Menu.setPromot(GitWorker.getCurrentGitBranch());
 		string option = Menu.showMenu();
+
+		if (option == "coloron") {
+			ScreenHandle::enableColor(true);
+		}
+
+		if (option == "coloroff") {
+			ScreenHandle::enableColor(false);
+		}
 
 		if (option == "clear") {
 			GitWorker.clear();
