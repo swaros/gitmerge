@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="97">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>BaseTypes.h</itemPath>
+      <itemPath>Cherry.h</itemPath>
+      <itemPath>CommitList.h</itemPath>
+      <itemPath>GetFileDiff.h</itemPath>
+      <itemPath>GitHandler.h</itemPath>
+      <itemPath>GitUser.h</itemPath>
+      <itemPath>MenuHandle.h</itemPath>
+      <itemPath>ScreenHandle.h</itemPath>
+      <itemPath>StringWorker.h</itemPath>
+      <itemPath>TermChars.h</itemPath>
+      <itemPath>TermHandle.h</itemPath>
+      <itemPath>TermInfo.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>Cherry.cpp</itemPath>
+      <itemPath>CommitList.cpp</itemPath>
+      <itemPath>GetFileDiff.cpp</itemPath>
+      <itemPath>GitHandler.cpp</itemPath>
+      <itemPath>GitUser.cpp</itemPath>
+      <itemPath>MenuHandle.cpp</itemPath>
+      <itemPath>ScreenHandle.cpp</itemPath>
+      <itemPath>StringWorker.cpp</itemPath>
+      <itemPath>TermChars.cpp</itemPath>
+      <itemPath>TermHandle.cpp</itemPath>
+      <itemPath>TermInfo.cpp</itemPath>
+      <itemPath>main.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="false"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <standard>10</standard>
+        </cTool>
+        <ccTool>
+          <standard>8</standard>
+        </ccTool>
+      </compileType>
+      <item path="BaseTypes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Cherry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Cherry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CommitList.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CommitList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetFileDiff.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetFileDiff.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GitHandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GitHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GitUser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GitUser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MenuHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MenuHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ScreenHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ScreenHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StringWorker.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StringWorker.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermChars.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermChars.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermInfo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermInfo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <standard>10</standard>
+          <commandLine>-finput-charset=UTF-8</commandLine>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <standard>8</standard>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>5</developmentMode>
+        </asmTool>
+      </compileType>
+      <item path="BaseTypes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Cherry.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Cherry.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="CommitList.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CommitList.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GetFileDiff.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GetFileDiff.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GitHandler.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GitHandler.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GitUser.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GitUser.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MenuHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MenuHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="ScreenHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="ScreenHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="StringWorker.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="StringWorker.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermChars.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermChars.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermHandle.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermHandle.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TermInfo.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TermInfo.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
