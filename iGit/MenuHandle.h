@@ -44,6 +44,7 @@ public:
 	void setPromot(string prmt);
 	void console(string message);
 private:
+	void fitLenght(string name, string option);
 	vector<TMenuEntry> MenuEntires;
 	vector<string> commandList;
 
@@ -55,6 +56,9 @@ private:
 	bool simpleOutput;
 
 	TermHandle Screen;
+
+	int commandLenght;
+	int DescriptionLentgh;
 
 };
 

@@ -48,6 +48,7 @@ public:
 	void setBasePath(string path);
 	void addAuthor();
 	bool findAuthor(string name);
+	bool fileExists(string name);
 	string getStateColor(string state);
 	string getWorkingDir();
 	string getCurrentBranch();

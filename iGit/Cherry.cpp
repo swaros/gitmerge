@@ -94,7 +94,6 @@ void Cherry::read() {
 	GitHandler gitExec;
 	this->plainList.clear();
 	string cmd = "git cherry -v " + this->compareBranch + " " + this->baseBranch;
-	cout << cmd << endl;
 	this->plainList = gitExec.execute(cmd);
 	StringWorker Strings;
 	this->hashes.clear();

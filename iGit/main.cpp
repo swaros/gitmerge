@@ -58,7 +58,9 @@ int main(int argc, char** argv) {
 	string cherryListSchowCommand = "L";
 	string markForCherry = "m";
 
-	ScreenHandle::enableColor(false);
+	Bool fullmenu = false;
+
+	ScreenHandle::enableColor(true);
 
 	MenuHandle Menu;
 
@@ -86,6 +88,7 @@ int main(int argc, char** argv) {
 	Menu.addMenu("Start Reading", "r");
 	Menu.addMenu("color on", "coloron");
 	Menu.addMenu("color off", "coloroff");
+	Menu.addMenu("expand/shrink menu", "menu");
 
 
 	Menu.setPromot(GitWorker.getCurrentGitBranch());
@@ -100,6 +103,8 @@ int main(int argc, char** argv) {
 	Menu.setMenuVisibile("ma", false);
 	Menu.setMenuVisibile("m", false);
 	Menu.setMenuVisibile("clear", false);
+	Menu.setMenuVisibile("coloron", false);
+	Menu.setMenuVisibile("coloroff", false);
 
 	if (argumentsGot) {
 		Menu.setCommandString(applyCommands);
@@ -111,6 +116,12 @@ int main(int argc, char** argv) {
 
 		Menu.setPromot(GitWorker.getCurrentGitBranch());
 		string option = Menu.showMenu();
+
+		if (option == "menu") {
+			fullmenu = !fullmenu;
+			Menu.setMenuVisibile("coloron", fullmenu);
+			Menu.setMenuVisibile("coloroff", fullmenu);
+		}
 
 		if (option == "coloron") {
 			ScreenHandle::enableColor(true);

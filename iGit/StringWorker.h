@@ -20,6 +20,9 @@ public:
 	StringWorker();
 	StringWorker(const StringWorker& orig);
 	virtual ~StringWorker();
+	string fillString(string text,int len);
+	string strFit(string text,int len);
+	string strFitRight(string text,int len);
 	vector<string> split(const string& s, const string& delim);
 private:
 

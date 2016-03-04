@@ -13,6 +13,8 @@ MenuHandle::MenuHandle() {
 	this->endCommand = "q";
 	this->currentCommand = "";
 	this->nextUsage = "";
+	this->commandLenght = 3;
+	this->DescriptionLentgh = 15;
 
 	if (this->Screen.getHeight() < 1 || this->Screen.getWidth() < 1) {
 		this->simpleOutput = true;
@@ -47,7 +49,29 @@ void MenuHandle::addMenu(TMenuEntry entry) {
 	this->MenuEntires.push_back(entry);
 }
 
+void MenuHandle::fitLenght(string name, string option) {
+	if (name.length() > this->DescriptionLentgh) {
+		this->DescriptionLentgh = name.length();
+	}
+	if (option.length() > this->commandLenght) {
+		this->commandLenght = option.length();
+	}
+
+	if (this->Screen.getWidth() > 0) {
+		if (this->commandLenght + this->DescriptionLentgh + 6 > this->Screen.getWidth()) {
+			this->DescriptionLentgh = this->Screen.getWidth() - 6 - this->commandLenght;
+			if (this->DescriptionLentgh < 1) {
+				this->DescriptionLentgh = 4;
+				this->commandLenght = 3;
+			}
+		}
+	}
+}
+
 void MenuHandle::addMenu(string name, string option) {
+
+	this->fitLenght(name, option);
+
 	TMenuEntry tmpAdd;
 	tmpAdd.name = name;
 	tmpAdd.cmd = option;
@@ -142,7 +166,6 @@ string MenuHandle::getInputString(string label) {
 
 		ScreenHandle::outln("", ScreenHandle::NORMAL);
 	}
-	ScreenHandle::outln("cmd:[" + result + "]", ScreenHandle::NORMAL);
 	return result;
 }
 
@@ -169,33 +192,41 @@ void MenuHandle::setMenuVisibile(string command, bool state) {
 }
 
 void MenuHandle::updateMenu(string command, string label) {
+
 	for (int t = 0; t < this->MenuEntires.size(); t++) {
 		TMenuEntry current = this->MenuEntires.at(t);
 		if (current.cmd == command) {
+			this->fitLenght(label, command);
 			this->MenuEntires.at(t).name = label;
 		}
 	}
 }
 
 void MenuHandle::viewMenu() {
+	StringWorker strHelper;
 	if (this->simpleOutput) {
-		ScreenHandle::outln("+--------------------", ScreenHandle::BLUE);
+		int strWidth = this->commandLenght + this->DescriptionLentgh + 4;
+		ScreenHandle::outln("+" + strHelper.fillString("-", strWidth) + "+", ScreenHandle::BLUE);
 		for (int t = 0; t < this->MenuEntires.size(); t++) {
 			TMenuEntry current = this->MenuEntires.at(t);
 			if (current.show == true) {
 				ScreenHandle::out("|  ", ScreenHandle::BLUE);
-				ScreenHandle::out(current.cmd, ScreenHandle::YELLOW);
-				ScreenHandle::outln("\t" + current.name + " ", ScreenHandle::WHITE);
+				ScreenHandle::out(strHelper.strFitRight(current.cmd, this->commandLenght), ScreenHandle::YELLOW);
+				ScreenHandle::out("|", ScreenHandle::BLUE);
+				ScreenHandle::out(strHelper.strFit(" " + current.name, this->DescriptionLentgh), ScreenHandle::WHITE);
+				ScreenHandle::outln("|", ScreenHandle::BLUE);
 
 			}
 
 		}
-		ScreenHandle::outln("+--------------------", ScreenHandle::BLUE);
+		ScreenHandle::outln("+" + strHelper.fillString("-", strWidth) + "+", ScreenHandle::BLUE);
+
 		ScreenHandle::out("| ", ScreenHandle::BLUE);
 		ScreenHandle::out("type ", ScreenHandle::LIGHT_BLUE);
 		ScreenHandle::out(this->endCommand, ScreenHandle::YELLOW);
 		ScreenHandle::outln(" to exit menu ", ScreenHandle::LIGHT_BLUE);
-		ScreenHandle::outln("+--------------------", ScreenHandle::BLUE);
+		ScreenHandle::outln("+" + strHelper.fillString("-", strWidth), ScreenHandle::BLUE);
+
 
 
 	} else {

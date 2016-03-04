@@ -150,6 +150,15 @@ bool GetFileDiff::findAuthor(string name) {
 	return false;
 }
 
+bool GetFileDiff::fileExists(string name) {
+	for (int i = 0; i < this->gitFiles.size(); i++) {
+		if (this->gitFiles.at(i).Filename == name) {
+			return true;
+		}
+	}
+	return false;
+}
+
 string GetFileDiff::GetAuthorsAsOnlineString() {
 	string infoStr = "";
 	for (int i = 0; i < this->includedAuthor.size(); i++) {
@@ -508,7 +517,6 @@ void GetFileDiff::markForCherryPick(int number) {
 					if (found > -1) {
 						if (this->gitFiles.at(found).marked == false) {
 
-
 							this->markForCherryPick(found);
 							//cout << "mark " << affected.at(b) << endl;
 						}
@@ -563,17 +571,16 @@ void GetFileDiff::getDiffFiles() {
 	if (this->CherryList.size() < 1
 			|| this->CherryList.getBaseBranch() != this->currentBranch
 			|| this->checkBranch != this->CherryList.getCompareBranch()) {
-		cout << "refresh cherry list .. please wait" << endl;
-		this->CherryList.read();
 
-		cout << "get " << this->CherryList.size() << " unpicked commits in total" << endl;
+		ScreenHandle::out("get cherry list..please wait ", ScreenHandle::BOLD);
+		this->CherryList.read();
+		ScreenHandle::out("...found " + std::to_string(this->CherryList.size()) + " unpicked commits ", ScreenHandle::BOLD);
+		ScreenHandle::outln("", ScreenHandle::NORMAL);
+
 	}
 
 	vector<string> changedFiles;
 
-	// clear old stuff
-
-	//this->gitFiles.clear();
 
 	changedFiles = GitExex.execute(showCmd);
 
@@ -587,7 +594,7 @@ void GetFileDiff::getDiffFiles() {
 		filepart = StringHelper.split(entry, "\t");
 
 		//cout << "GOT: " << entry << " " << filepart.size() << endl;
-		if (filepart.size() == 2) {
+		if (filepart.size() == 2 && this->fileExists(filepart.at(1)) == false) {
 			TGitFile addMe;
 			addMe.Filename = filepart.at(1);
 			addMe.state = filepart.at(0);
@@ -598,8 +605,15 @@ void GetFileDiff::getDiffFiles() {
 		}
 	}
 
-	cout << "diff files found: " << addedFiles << endl;
-
+	//cout << "diff files found: " << addedFiles << endl;
+	if (addedFiles > 0) {
+		ScreenHandle::out("diffs found in ", ScreenHandle::BOLD);
+		ScreenHandle::out(to_string(addedFiles), ScreenHandle::YELLOW);
+		ScreenHandle::out(" Files", ScreenHandle::BOLD);
+	} else {
+		ScreenHandle::out("No diffs found", ScreenHandle::LIGHT_GREEN);
+	}
+	ScreenHandle::outln("", ScreenHandle::NORMAL);
 
 }
 
