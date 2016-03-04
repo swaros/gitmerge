@@ -17,9 +17,11 @@
 using namespace std;
 
 void splash() {
-	cout << "======================" << endl;
-	cout << "Git Cherrypicking Tool" << endl;
-	cout << "======================" << endl;
+	string version = "0.0.1";
+
+	cout << "igit ";
+	cout << "v " << version << endl;
+	cout << "swaros git cherrypicking tool" << endl;
 
 }
 
@@ -41,13 +43,13 @@ int main(int argc, char** argv) {
 
 	splash();
 
-	string path = "/home/tziegler/Bigpoint/seafight_Lokal";
+	string path = ".";
 
 	string currentBranch = "master";
 
-	string compareToBrach = "release/release_16.3.1";
+	string compareToBrach = "master";
 
-	string basePath = "code/presentation/website/";
+	string basePath = "";
 
 	TermInfo Terminal;
 
