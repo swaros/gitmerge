@@ -37,6 +37,7 @@ public:
 	string getInputString(string label);
 	void updateMenu(string command, string label);
 	void setMenuVisibile(string command,bool state);
+	TMenuEntry getCommandByInput(string cmd);
 	string getCurrentCommand();
 	string showMenu();
 	string getCmdParam(string cmd);

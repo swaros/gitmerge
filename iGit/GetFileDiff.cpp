@@ -458,12 +458,17 @@ string GetFileDiff::getMarkedCherryHashes() {
 }
 
 void GetFileDiff::runCherryForMarked() {
+	cout << this->CherryList.getCherryList().size() << endl;
 	vector<int> picRanges;
 	bool run = true;
 	for (int i = 0; i < this->gitFiles.size(); i++) {
 		if (this->gitFiles.at(i).marked == true) {
 			bool addthis = true;
 			for (int m = 0; m < picRanges.size() and addthis; m++) {
+				if (this->gitFiles.at(i).positionInDiff < 0 || this->gitFiles.at(i).positionInDiff > this->gitFiles.size()) {
+					ScreenHandle::outln("Invalid Cherrypick Infomation. you have to execute h first", ScreenHandle::RED);
+					return;
+				}
 				if (picRanges.at(m) == this->gitFiles.at(i).positionInDiff) {
 					addthis = false;
 				}
@@ -479,7 +484,13 @@ void GetFileDiff::runCherryForMarked() {
 	check.execute("git checkout " + this->checkBranch);
 
 	for (int i = 0; i < picRanges.size(); i++) {
-		string cHash = this->CherryList.getCherryList().at(picRanges.at(i));
+		int picInCherry = picRanges.at(i);
+		if (picInCherry > this->CherryList.getCherryList().size() || picInCherry < 0) {
+			ScreenHandle::out("ERROR ", ScreenHandle::LIGHT_RED);
+			ScreenHandle::outln("Invalid Cherrypick Infomation. you have to execute h (get missing commits) first", ScreenHandle::RED);
+			return;
+		}
+		string cHash = this->CherryList.getCherryList().at(picInCherry);
 		string realHash = this->CherryList.getHashFromLine(cHash);
 		ScreenHandle::outln(cHash, ScreenHandle::LIGHT_BLUE);
 		string cmd = "git cherry-pick " + realHash;

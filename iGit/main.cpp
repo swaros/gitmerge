@@ -198,13 +198,6 @@ int main(int argc, char** argv) {
 			GitWorker.getDiffFiles();
 			GitWorker.getHashes();
 
-
-			//GitWorker.printCherryPick(nr);
-			/*
-			Menu.setMenuVisibile("l", false);
-			Menu.setMenuVisibile("h", false);
-			Menu.setMenuVisibile("c", false);
-			 */
 		}
 
 		if (option == "c") {
@@ -267,10 +260,6 @@ int main(int argc, char** argv) {
 		}
 
 	}
-
-
-
-
 	return 0;
 }
 

@@ -202,6 +202,20 @@ void MenuHandle::updateMenu(string command, string label) {
 	}
 }
 
+TMenuEntry MenuHandle::getCommandByInput(string cmd) {
+	for (int t = 0; t < this->MenuEntires.size(); t++) {
+		TMenuEntry current = this->MenuEntires.at(t);
+		if (current.cmd == cmd) {
+			return current;
+		}
+	}
+	TMenuEntry dummy;
+	dummy.cmd = "#";
+	dummy.name = "ERROR";
+
+	return dummy;
+}
+
 void MenuHandle::viewMenu() {
 	StringWorker strHelper;
 	if (this->simpleOutput) {

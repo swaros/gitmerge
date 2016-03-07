@@ -7,7 +7,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/StringWorker.h</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/GetFileDiff.h</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/MenuHandle.h</file>
             <file>file:/home/tziegler/Projects/gitmerge/iGit/main.cpp</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/Cherry.cpp</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/StringWorker.cpp</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/MenuHandle.cpp</file>
+            <file>file:/home/tziegler/Projects/gitmerge/iGit/GetFileDiff.cpp</file>
         </group>
     </open-files>
 </project-private>
