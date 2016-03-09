@@ -31,6 +31,7 @@ public:
 	void setBaseBranch(string branch);
 	void setCompareBranch(string branch);
 	void read();
+	TCherry getCherrybyhash(string hash);
 	vector<string> getCherryList();
 	string getBaseBranch();
 	string getCompareBranch();

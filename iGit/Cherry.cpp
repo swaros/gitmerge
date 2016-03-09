@@ -51,6 +51,18 @@ bool Cherry::missingHash(string hash) {
 	return false;
 }
 
+TCherry Cherry::getCherrybyhash(string hash) {
+	if (this->hashExists(hash)) {
+		return this->hashes[hash];
+	}
+	TCherry dummy;
+	dummy.flag = '#';
+	dummy.hash = "dummyhash";
+	dummy.message = "just a dummy";
+	dummy.position = -1;
+	return dummy;
+}
+
 bool Cherry::existingHash(string hash) {
 	if (this->hashExists(hash)) {
 		return this->hashes[hash].flag == "-";
