@@ -25,6 +25,15 @@ void splash() {
 
 }
 
+int str2int(const string &str, int failNumber) {
+	stringstream ss(str);
+	int num;
+	if ((ss >> num).fail()) {
+		return failNumber;
+	}
+	return num;
+}
+
 /*
  *
  */
@@ -85,6 +94,7 @@ int main(int argc, char** argv) {
 	Menu.addMenu("...Cherrypick", "C");
 	Menu.addMenu("...Just Show Cherrypick", "c");
 	Menu.addMenu("...Cherrypick marked", "cm");
+	Menu.addMenu("...Preview Mode Active. [Change]", "x");
 	Menu.addMenu("Start Reading", "r");
 	Menu.addMenu("color on", "coloron");
 	Menu.addMenu("color off", "coloroff");
@@ -94,6 +104,7 @@ int main(int argc, char** argv) {
 	Menu.setPromot(GitWorker.getCurrentGitBranch());
 
 	Menu.setMenuVisibile("l", false);
+	Menu.setMenuVisibile("x", false);
 	Menu.setMenuVisibile("L", false);
 	Menu.setMenuVisibile("h", false);
 	Menu.setMenuVisibile("hh", false);
@@ -153,10 +164,15 @@ int main(int argc, char** argv) {
 		}
 
 		if (option == markForCherry) {
-			GitWorker.printMissingDiffFiles();
-			string number = Menu.getInputString("Insert Number of file:");
-			int nr = std::stoi(number);
-			GitWorker.markForCherryPick(nr);
+			//GitWorker.printMissingDiffFiles();
+			GitWorker.printCherryAssignedList();
+			string number = Menu.getInputString("insert Displayed green Number until git should cherry-pick:");
+			//int nr = std::stoi(number);
+			int nr = str2int(number, -1);
+			if (nr >= 0) {
+				GitWorker.markForCherryPick(nr);
+				GitWorker.printCherryAssignedList();
+			}
 		}
 
 		if (option == pullCommand) {
@@ -180,6 +196,7 @@ int main(int argc, char** argv) {
 
 		if (option == "h") {
 			GitWorker.getHashes();
+			GitWorker.printDiffFiles();
 			Menu.setMenuVisibile("c", true);
 			Menu.setMenuVisibile("C", true);
 		}
@@ -236,9 +253,13 @@ int main(int argc, char** argv) {
 			GitWorker.getDiffFiles();
 		}
 
+		if (option == "x") {
+			GitWorker.executeCm = !GitWorker.executeCm;
+		}
 
 		// display options
 		if (GitWorker.size() > 0) {
+			Menu.setMenuVisibile("x", true);
 			Menu.setMenuVisibile("l", true);
 			Menu.setMenuVisibile("L", true);
 			Menu.setMenuVisibile("h", true);
@@ -248,6 +269,7 @@ int main(int argc, char** argv) {
 			Menu.setMenuVisibile("clear", true);
 
 		} else {
+			Menu.setMenuVisibile("x", false);
 			Menu.setMenuVisibile("ma", false);
 			Menu.setMenuVisibile("cm", false);
 			Menu.setMenuVisibile("l", false);
@@ -257,6 +279,13 @@ int main(int argc, char** argv) {
 			Menu.setMenuVisibile("c", false);
 			Menu.setMenuVisibile("C", false);
 			Menu.setMenuVisibile("clear", false);
+		}
+
+		if (GitWorker.executeCm) {
+			Menu.updateMenu("x", "Execution Mode Active [Change]");
+		} else {
+			Menu.updateMenu("x", "...Preview Mode Active. [Change]");
+
 		}
 
 	}

@@ -38,6 +38,9 @@ struct TGitFile {
 
 class GetFileDiff {
 public:
+
+	bool executeCm = false;
+
 	GetFileDiff();
 	GetFileDiff(const GetFileDiff& orig);
 	virtual ~GetFileDiff();
@@ -75,6 +78,8 @@ public:
 	void printVectorList(vector<string> buff);
 	void gitExec(string cmd);
 	void showCherryList();
+	void showCherryList(bool onlyAdded);
+	void printCherryAssignedList();
 	vector<string> getAffectedFilesByHash(string hash, string originName);
 	string GetAuthorsAsOnlineString();
 	string getCurrentGitBranch();
@@ -82,6 +87,10 @@ public:
 	vector<string> getDiffHashes(string filename, string branch);
 
 private:
+
+	void applyDiffHash(string hash);
+	bool inPicDiffList(int nr);
+
 	string workingDirectory;
 	string currentBranch;
 	string checkBranch;
@@ -93,6 +102,13 @@ private:
 
 	CommitList Commit;
 	Cherry CherryList;
+
+	// the position numbers in the cherrylist
+	vector<int> picPositions;
+
+	// the maximum number of picks in range.
+	// depends on the numbers in picPositions
+	int picUntilTo;
 
 };
 

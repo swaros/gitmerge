@@ -15,6 +15,7 @@
 GetFileDiff::GetFileDiff() {
 	this->currentBranch = "master";
 	this->basedir = "";
+	this->picUntilTo = -1;
 }
 
 GetFileDiff::GetFileDiff(const GetFileDiff& orig) {
@@ -65,7 +66,46 @@ void GetFileDiff::gitExec(string cmd) {
 }
 
 void GetFileDiff::showCherryList() {
-	this->printVectorList(this->CherryList.getCherryList());
+	showCherryList(true);
+}
+
+void GetFileDiff::showCherryList(bool onlyAdded) {
+	//this->printVectorList(this->CherryList.getCherryList());
+
+	for (int i = 0; i < this->CherryList.getCherryList().size(); i++) {
+
+		string fullInfoLine = this->CherryList.getCherryList().at(i);
+		string cherryHash = this->CherryList.getHashFromLine(fullInfoLine);
+
+		TCherry info = this->CherryList.getCherrybyhash(cherryHash);
+
+		if (info.flag != "#" && (onlyAdded == false || info.flag == "+")) {
+			ScreenHandle::out(info.flag, ScreenHandle::LIGHT_GREEN);
+
+			// look if this entry already in piclist an mark them
+			std::vector<int>::iterator it;
+			it = find(this->picPositions.begin(), this->picPositions.end(), i);
+			bool included = false;
+			if (it != this->picPositions.end()) {
+				if (i <= this->picUntilTo) ScreenHandle::out(info.hash, ScreenHandle::YELLOW);
+				else ScreenHandle::out(info.hash, ScreenHandle::BOLD);
+				included = true;
+			} else {
+				ScreenHandle::out(info.hash, ScreenHandle::NORMAL);
+			}
+
+
+			ScreenHandle::out(" ", ScreenHandle::LIGHT_CYAN);
+			if (included) {
+				if (i <= this->picUntilTo) ScreenHandle::outln(info.message, ScreenHandle::YELLOW);
+				else ScreenHandle::outln(info.message, ScreenHandle::LIGHT_BLUE);
+			} else {
+				ScreenHandle::outln(info.message, ScreenHandle::BLUE);
+			}
+		}
+
+	}
+
 }
 
 void GetFileDiff::printVectorList(vector<string> buff) {
@@ -136,9 +176,6 @@ void GetFileDiff::addAuthor() {
 			}
 		}
 	}
-
-
-
 }
 
 bool GetFileDiff::findAuthor(string name) {
@@ -180,59 +217,31 @@ string GetFileDiff::getStateColor(string state) {
 	return fileColor;
 }
 
-void GetFileDiff::printDiffFiles() {
-	string colorCode = ScreenHandle::NORMAL;
-	vector<string> foundHashes;
-	vector<int> picRanges;
-	for (int i = 0; i < this->gitFiles.size(); i++) {
-		int countOfDiffs = this->gitFiles.at(i).diffs.size();
-		if (this->gitFiles.at(i).marked) {
-			colorCode = ScreenHandle::LIGHT_BLUE;
-			ScreenHandle::out("*\t", ScreenHandle::YELLOW);
-		} else {
-			colorCode = ScreenHandle::BLUE;
-			ScreenHandle::out("?\t", ScreenHandle::NORMAL);
+void GetFileDiff::applyDiffHash(string hash) {
+	if (this->CherryList.missingHash(hash)) {
+		TCherry info = this->CherryList.getCherrybyhash(hash);
+		if (info.position >= 0 && !inPicDiffList(info.position)) {
+			picPositions.push_back(info.position);
 		}
-
-		// flag
-		string fileColor = getStateColor(this->gitFiles.at(i).state);
-
-		//cout << i << "\t" << countOfDiffs << "\t" << this->gitFiles.at(i).state << "\t" << this->gitFiles.at(i).Filename << endl;
-		ScreenHandle::out(std::to_string(i) + "\t", colorCode);
-
-		if (this->gitFiles.at(i).positionInDiff > -1) {
-			string hash = this->CherryList.getCherryList().at(this->gitFiles.at(i).positionInDiff);
-			//ScreenHandle::out(hash + "\t", ScreenHandle::CYAN);
-			bool alreadyIn = false;
-			for (int a = 0; a < foundHashes.size(); a++) {
-				if (foundHashes.at(a) == hash) {
-					alreadyIn = true;
-				}
-			}
-
-			if (alreadyIn == false) {
-				foundHashes.push_back(hash);
-				picRanges.push_back(this->gitFiles.at(i).positionInDiff);
-			}
-
-			ScreenHandle::out(to_string(this->gitFiles.at(i).positionInDiff) + "\t", ScreenHandle::CYAN);
-		} else {
-			ScreenHandle::out("?\t", ScreenHandle::WHITE);
-		}
-
-
-
-
-
-		ScreenHandle::out("[" + this->gitFiles.at(i).state + "]\t", ScreenHandle::MAGENTA);
-		ScreenHandle::outln(this->gitFiles.at(i).Filename, fileColor);
 	}
+}
 
-	if (picRanges.size() > 0) {
-		std::sort(picRanges.begin(), picRanges.end());
+bool GetFileDiff::inPicDiffList(int nr) {
+	std::vector<int>::iterator it;
+	it = find(this->picPositions.begin(), this->picPositions.end(), nr);
+	bool included = false;
+	if (it != this->picPositions.end()) {
+		included = true;
+	}
+	return included;
+}
+
+void GetFileDiff::printCherryAssignedList() {
+	if (picPositions.size() > 0) {
+		std::sort(picPositions.begin(), picPositions.end());
 		ScreenHandle::outln("List of affected Commits", ScreenHandle::YELLOW);
-		for (int i = 0; i < picRanges.size(); i++) {
-			int current = picRanges.at(i);
+		for (int i = 0; i < picPositions.size(); i++) {
+			int current = picPositions.at(i);
 
 			string fullInfo = this->CherryList.getCherryList().at(current);
 			string cherryHash = this->CherryList.getHashFromLine(fullInfo);
@@ -242,7 +251,12 @@ void GetFileDiff::printDiffFiles() {
 			//ScreenHandle::outln(foundHashes.at(i), ScreenHandle::CYAN);
 			if (info.flag != "#") {
 				ScreenHandle::out(info.flag, ScreenHandle::LIGHT_GREEN);
-				ScreenHandle::out(info.hash, ScreenHandle::BOLD);
+				if (info.position <= this->picUntilTo) {
+					ScreenHandle::out(info.hash, ScreenHandle::BOLD);
+				} else {
+					ScreenHandle::out(info.hash, ScreenHandle::NORMAL);
+
+				}
 				ScreenHandle::out("|", ScreenHandle::LIGHT_CYAN);
 				ScreenHandle::out(to_string(info.position), ScreenHandle::LIGHT_GREEN);
 				ScreenHandle::out("|", ScreenHandle::LIGHT_CYAN);
@@ -250,6 +264,38 @@ void GetFileDiff::printDiffFiles() {
 			}
 		}
 	}
+}
+
+void GetFileDiff::printDiffFiles() {
+	string colorCode = ScreenHandle::NORMAL;
+	//vector<string> foundHashes;
+	//this->picPositions.clear();
+	for (int i = 0; i < this->gitFiles.size(); i++) {
+		int countOfDiffs = this->gitFiles.at(i).diffs.size();
+		if (this->gitFiles.at(i).positionInDiff > -1 && this->gitFiles.at(i).positionInDiff <= this->picUntilTo) {
+			colorCode = ScreenHandle::LIGHT_BLUE;
+			ScreenHandle::out("+\t", ScreenHandle::LIGHT_GREEN);
+		} else {
+			colorCode = ScreenHandle::BLUE;
+			ScreenHandle::out("-\t", ScreenHandle::LIGHT_RED);
+		}
+
+		// flag
+		string fileColor = getStateColor(this->gitFiles.at(i).state);
+		ScreenHandle::out(std::to_string(i) + "\t", colorCode);
+
+		if (this->gitFiles.at(i).positionInDiff > -1) {
+
+			ScreenHandle::out(to_string(this->gitFiles.at(i).positionInDiff) + "\t", ScreenHandle::CYAN);
+		} else {
+			ScreenHandle::out("?\t", ScreenHandle::WHITE);
+		}
+
+		ScreenHandle::out("[" + this->gitFiles.at(i).state + "]\t", ScreenHandle::MAGENTA);
+		ScreenHandle::outln(this->gitFiles.at(i).Filename, fileColor);
+	}
+
+	printCherryAssignedList();
 
 }
 
@@ -292,6 +338,7 @@ vector<string> GetFileDiff::getAffectedFilesByHash(string hash, string originNam
 
 void GetFileDiff::clear() {
 	this->gitFiles.clear();
+	this->picPositions.clear();
 }
 
 void GetFileDiff::getHashes() {
@@ -351,6 +398,8 @@ void GetFileDiff::getHashes(bool showAffectedFiles) {
 						if (this->includedAuthor.size() < 1 || findAuthor(info.Author)) {
 							this->gitFiles.at(i).pickThis = true;
 
+							applyDiffHash(this->gitFiles.at(i).currentHashes.at(t));
+
 
 							ScreenHandle::out("\t\tmissing       ", ScreenHandle::NORMAL);
 							ScreenHandle::outln(this->gitFiles.at(i).currentHashes.at(t), ScreenHandle::YELLOW);
@@ -381,12 +430,15 @@ void GetFileDiff::getHashes(bool showAffectedFiles) {
 
 									int nr = this->getNumberByFilename(filesIncluded.at(inc));
 									if (nr < 0) {
+										string oldDir;
 										ScreenHandle::outln("\t\t" + filesIncluded.at(inc), ScreenHandle::MAGENTA);
 										ScreenHandle::outln("\t\tthis file is not inluded in cherrylist", ScreenHandle::YELLOW);
 										ScreenHandle::outln("\t\t try to get missing commits", ScreenHandle::YELLOW);
 										ScreenHandle::out("\t\t", ScreenHandle::NORMAL);
+										oldDir = this->basedir;
 										this->basedir = filesIncluded.at(inc);
 										this->getDiffFiles();
+										this->basedir = oldDir;
 									}
 
 								}
@@ -410,7 +462,7 @@ void GetFileDiff::getHashes(bool showAffectedFiles) {
 void GetFileDiff::cherryPickMarked() {
 	for (int i = 0; i < this->gitFiles.size(); i++) {
 		if (this->gitFiles.at(i).marked == true) {
-			this->cherryPick(i);
+			//this->cherryPick(i);
 		}
 	}
 }
@@ -509,90 +561,53 @@ string GetFileDiff::getMarkedCherryHashes() {
 }
 
 void GetFileDiff::runCherryForMarked() {
-	cout << this->CherryList.getCherryList().size() << endl;
-	vector<int> picRanges;
-	bool run = true;
-	for (int i = 0; i < this->gitFiles.size(); i++) {
-		if (this->gitFiles.at(i).marked == true) {
-			bool addthis = true;
-			for (int m = 0; m < picRanges.size() and addthis; m++) {
-				if (this->gitFiles.at(i).positionInDiff < 0 || this->gitFiles.at(i).positionInDiff > this->gitFiles.size()) {
-					ScreenHandle::outln("Invalid Cherrypick Infomation. you have to execute h first", ScreenHandle::RED);
-					return;
-				}
-				if (picRanges.at(m) == this->gitFiles.at(i).positionInDiff) {
-					addthis = false;
-				}
-			}
-			if (addthis) {
-				picRanges.push_back(this->gitFiles.at(i).positionInDiff);
-			}
-		}
-	}
-	std::sort(picRanges.begin(), picRanges.end());
+
 	GitHandler check;
+	bool run = true;
+	bool justShow = !this->executeCm;
 
-	check.execute("git checkout " + this->checkBranch);
+	if (!justShow) check.execute("git checkout " + this->checkBranch);
+	else ScreenHandle::outln("we are right now in the preview mode. No Cherrypicking executed", ScreenHandle::BOLD);
 
-	for (int i = 0; i < picRanges.size(); i++) {
-		int picInCherry = picRanges.at(i);
-		if (picInCherry > this->CherryList.getCherryList().size() || picInCherry < 0) {
-			ScreenHandle::out("ERROR ", ScreenHandle::LIGHT_RED);
-			ScreenHandle::outln("Invalid Cherrypick Infomation. you have to execute h (get missing commits) first", ScreenHandle::RED);
-			return;
-		}
-		string cHash = this->CherryList.getCherryList().at(picInCherry);
-		string realHash = this->CherryList.getHashFromLine(cHash);
-		ScreenHandle::outln(cHash, ScreenHandle::LIGHT_BLUE);
-		string cmd = "git cherry-pick " + realHash;
-		if (run) {
-			vector<string> output = check.execute(cmd);
 
-			for (int g = 0; g < output.size(); g++) {
-				cout << output.at(g) << endl;
+	for (int i = 0; i < this->picPositions.size(); i++) {
+		int picInCherry = picPositions.at(i);
+		if (picInCherry <= this->picUntilTo) {
+			if (picInCherry > this->CherryList.getCherryList().size() || picInCherry < 0) {
+				ScreenHandle::out("ERROR ", ScreenHandle::LIGHT_RED);
+				ScreenHandle::outln("Invalid Cherrypick Infomation. you have to execute h (get missing commits) first", ScreenHandle::RED);
+				return;
+			}
+			string cHash = this->CherryList.getCherryList().at(picInCherry);
+			string realHash = this->CherryList.getHashFromLine(cHash);
+			if (!justShow) ScreenHandle::outln(cHash, ScreenHandle::LIGHT_BLUE);
+			string cmd = "git cherry-pick " + realHash;
+			if (run && !justShow) {
+				vector<string> output = check.execute(cmd);
+
+				for (int g = 0; g < output.size(); g++) {
+					cout << output.at(g) << endl;
+				}
+			} else if (justShow) {
+				ScreenHandle::outln(cmd, ScreenHandle::NORMAL);
 			}
 		}
 	}
-	check.execute("git checkout " + this->currentBranch);
+	if (!justShow) check.execute("git checkout " + this->currentBranch);
 
 
 }
 
 void GetFileDiff::markAll() {
-	for (int i = 0; i < this->gitFiles.size(); i++) {
-		this->gitFiles.at(i).marked = true;
+	for (int i = 0; i < this->picPositions.size(); i++) {
+		if (this->picPositions.at(i) > this->picUntilTo) {
+			this->picUntilTo = this->picPositions.at(i);
+		}
 	}
 }
 
 void GetFileDiff::markForCherryPick(int number) {
-	if (number >= 0 and number < this->gitFiles.size()) {
-		this->gitFiles.at(number).marked = true;
-
-		string fileName = this->gitFiles.at(number).Filename;
-		for (int i = 0; i < this->gitFiles.at(number).currentHashes.size(); i++) {
-			string hash = this->gitFiles.at(number).currentHashes.at(i);
-			if (this->CherryList.missingHash(hash) == true) {
-				vector<string> affected = this->getAffectedFilesByHash(hash, fileName);
-
-				for (int b = 0; b < affected.size(); b++) {
-					int found = this->getNumberByFilename(affected.at(b));
-					if (found > -1) {
-						if (this->gitFiles.at(found).marked == false) {
-
-							this->markForCherryPick(found);
-							//cout << "mark " << affected.at(b) << endl;
-						}
-
-					} else {
-						//cout << "not in difflist " << affected.at(b) << endl;
-					}
-				}
-
-
-			}
-		}
-
-	}
+	this->picUntilTo = number;
 }
 
 int GetFileDiff::getNumberByFilename(string filename) {
