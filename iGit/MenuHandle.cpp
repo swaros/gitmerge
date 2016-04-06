@@ -86,7 +86,6 @@ void MenuHandle::setCommandString(string cmd) {
 }
 
 string MenuHandle::showMenu() {
-	//cout << "[" << this->prompt << "] | enter command:";
 
 	if (this->commandList.empty() && this->commandList.size() < 1) {
 		viewMenu();
@@ -99,9 +98,6 @@ string MenuHandle::showMenu() {
 		string inputCommand;
 		string limiter = ";";
 		cin >> inputCommand;
-
-		//inputCommand = getInputString("command:");
-
 
 		StringWorker strHelper;
 		this->commandList = strHelper.split(inputCommand, limiter);
@@ -120,10 +116,22 @@ string MenuHandle::showMenu() {
 	}
 	this->currentCommand = this->getCmdParam(this->currentCommand);
 
-	//cin >> this->currentCommand;
-
-	//cout << endl;
 	ScreenHandle::outln("", ScreenHandle::NORMAL);
+
+	TMenuEntry assignedCmd = this->getCommandByInput(this->currentCommand);
+	if (assignedCmd.cmd != "#") {
+		ScreenHandle::out("executing ", ScreenHandle::LIGHT_BLUE);
+		ScreenHandle::outln(assignedCmd.name, ScreenHandle::BLUE);
+	} else {
+		if (this->currentCommand == this->endCommand) {
+
+			ScreenHandle::outln("Bye bye ...have a nice day....", ScreenHandle::NORMAL);
+		} else {
+			ScreenHandle::out("unknow command ", ScreenHandle::RED);
+			ScreenHandle::outln(this->currentCommand, ScreenHandle::LIGHT_RED);
+		}
+	}
+
 	return this->currentCommand;
 }
 
